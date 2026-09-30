@@ -1,0 +1,20 @@
+# Target files from sbt and compilers
+target/
+project/target/
+project/project/
+
+# Metals, Bloop, and BSP
+.metals/
+.bloop/
+.bsp/
+
+# IDE configurations
+.idea/
+*.iml
+.vscode/
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+*~
+*.swp
