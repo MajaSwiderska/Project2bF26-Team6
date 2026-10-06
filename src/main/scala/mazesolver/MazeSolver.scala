@@ -79,8 +79,13 @@ def isWalkable(maze: Array[Array[Char]], row: Int, col: Int): Boolean =
   *   Some((dr, dc)) for a recognised direction, None otherwise
   */
 def directionDelta(direction: Char): Option[(Int, Int)] =
-  // TODO: Map 'U', 'D', 'L', 'R' to their corresponding (dRow, dCol) coordinate offsets
-  None
+  direction match 
+    case 'U' => Some((-1, 0))
+    case 'D' => Some((1, 0))
+    case 'L' => Some((0, -1))
+    case 'R' => Some((0, 1))
+    case_ => None
+    
 
 /** Try to move the robot one step in the given direction.
   *
