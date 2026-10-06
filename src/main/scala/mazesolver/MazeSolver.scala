@@ -70,7 +70,7 @@ def initGame(lines: Array[String] = defaultMazeLines, startEnergy: Int = 12)
 /** True when the cell at (row, col) is inside the grid and is not a wall. */
 def isWalkable(maze: Array[Array[Char]], row: Int, col: Int): Boolean =
   row >= 0 && row < maze.length && col >= 0 && col < maze(row).length && maze(row)(col) != '#'
-  false
+  
 
 /** Translate a direction character into a (dRow, dCol) delta.
   *
