@@ -98,9 +98,18 @@ def moveRobot(
     robot: Array[Int],
     direction: Char
 ): Boolean =
-  // TODO: If the target cell in the given direction is walkable, update robot(0) and robot(1)
-  // in place and return true; otherwise return false
-  false
+  directionDelta(direction) match
+    case Some((dr, dc)) =>
+      val newRow = robot(0) + dr
+      val newCol = robot(1) + dc
+      if isWalkable(maze, newRow, newCol) then
+        robot(0) = newRow
+        robot(1) = newCol
+        true
+      else
+        false
+      case None =>
+        false
 
 /** If the robot is standing on an energy cell ('C'), collect it.
   *
