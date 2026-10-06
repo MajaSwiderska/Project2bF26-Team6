@@ -84,8 +84,7 @@ def directionDelta(direction: Char): Option[(Int, Int)] =
     case 'D' => Some((1, 0))
     case 'L' => Some((0, -1))
     case 'R' => Some((0, 1))
-    case_ => None
-    
+    case _   => None
 
 /** Try to move the robot one step in the given direction.
   *
