@@ -108,7 +108,7 @@ def moveRobot(
         true
       else
         false
-      case None =>
+    case None =>
         false
 
 /** If the robot is standing on an energy cell ('C'), collect it.
