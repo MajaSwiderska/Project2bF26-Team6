@@ -116,14 +116,19 @@ def moveRobot(
   * The cell is replaced with '.' and 1 is returned; otherwise 0.
   */
 def collectCell(maze: Array[Array[Char]], robot: Array[Int]): Int =
-  // TODO: If the robot is standing on an energy cell ('C'), replace it with '.' and return 1;
-  // otherwise return 0
-  0
+  val row = robot(0)
+  val col = robot(1)
+  if isWalkable(maze, row, col) && maze(row)(col) == 'C' then
+    maze(row)(col) = '.'
+    1
+  else
+    0
 
 /** True when the robot is standing on the exit ('E'). */
 def isAtExit(maze: Array[Array[Char]], robot: Array[Int]): Boolean =
-  // TODO: Return true if the robot is standing on the exit marker ('E')
-  false
+  val row = robot(0)
+  val col = robot(1)
+  isWalkable(maze, row, col) && maze(row)(col) == 'E'
 
 // ─── Rendering ───────────────────────────────────────────────────────────────
 
