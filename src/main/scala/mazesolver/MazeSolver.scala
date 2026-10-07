@@ -142,10 +142,21 @@ def render(
     energy: Int,
     cellsCollected: Int = 0
 ): String =
-  // TODO: Render the maze grid with '@' at the robot's current position,
-  // followed by a status line: s"Energy: $energy  Cells: $cellsCollected"
-  ""
-
+  val sb = new StringBuilder
+  val rr = robot(0)
+  val rc = robot(1)
+  val row = 0
+  while row < maze.length do
+    val col = 0
+    while col < maze(row).length do
+      if row == rr && col == rc then
+        else sb.append(maze(row)(col))
+        col += 1
+      sb.append('\n')
+      row += 1
+    sb.append(s"Energy: $energy Cells: $cellsCollected")
+    sb.toString
+  
 // ─── Game loop ───────────────────────────────────────────────────────────────
 
 /** Execute a sequence of moves on the maze.
