@@ -145,11 +145,11 @@ def render(
   val sb = new StringBuilder
   val rr = robot(0)
   val rc = robot(1)
-  val row = 0
+  var row = 0
   while row < maze.length do
-    val col = 0
+    var col = 0
     while col < maze(row).length do
-      if row == rr && col == rc then
+      if row == rr && col == rc then sb.append('@')
         else sb.append(maze(row)(col))
         col += 1
       sb.append('\n')
