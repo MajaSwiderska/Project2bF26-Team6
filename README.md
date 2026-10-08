@@ -328,10 +328,20 @@ Compare `revealReachable` (recursive) with `revealReachableIterative` (explicit 
 
 In this assignment, all state is represented using raw arrays (`Array[Array[Char]]`, `Array[Int]`) and loose variables passed into top-level procedures.
 1. What problems or vulnerabilities arise when multiple procedures directly read and mutate naked arrays?
-   > [TODO: Your answer here]
+   - Since the maze and robot are just raw arrays, any procedure that gets a reference to them can change anything. Nothing stops a function from overwriting the exit, moving the robot out of bounds or turning a floor cell into a wall.
+   - The robot stored as `Array[Int]` just two numbers. There is no rule saying index 0 is the row and index 1 is the column. If you accidentlly swap them the complier won't catch it and the game will start behaving weird.
+   - If two procedures hold the same array, changes made by one show up in the other. The `testAliasing` test shows this clearly, `a` and `b` point to the same heap array so when `a` changes it `b` sees the change too. In a bigger program, this type of hidden connections causes bugs and it could be annoying.
+   - The types that don't tell you much. `Array[Int]` could be a robot position, an energy value or a coordinate offset. They do all look the same to the complier so mistakes sometimes go through. 
+   - There is no place that defines what a "robot" actually is. You can read every procedure that touches the robot array to figure out what the fields mean.
+   - Testing is annoying because every test has to build a whole maze and robot array by hand even if it's checking on small thing.
 
 2. How would an Object-Oriented or ADT-based design (e.g., `Maze`, `Robot`, `Cell`, `Position`) improve encapsulation, type safety, and maintainability in Project 2?
-   > [TODO: Your answer here]
+   - Instead of using raw arrays, giving each concept its own type. A `Position(row, col)` for locations, a `Robot(position, energy)` for the robot, a `Cell` enum for whats in the grid (Wall, Floor, Energy, Exit), and a `Maze(grid)` for the grid itself.
+   - Encapsulation means rules like "the robot is always on a walkable cell" gets enforced by the code instead of relying on everyone remembering them.
+   - Type safety means `Position`, `Cell`, and `Robot` are separate types. You cannot accidentally pass a robot postion where an energy value was expected and the complier catches it if you try.
+   - Adding a new feature is easier, if you want a new kind of cell like a locked door you just add a new case to the `Cell` enum. The compiler tells you every match statement that needs updating.
+   - Testing does get simpler. A test can just write `Robot(Position(1, 1), energy = 10)` instead of building raw arrays by hand.
+   - The downside is more code. More types, more files and more boilerplate. For a small maze game like this project the imperative version is quicker to write. But once the program grows the OO/ADT version is the only ine that stays manageable.
 
 ---
 
