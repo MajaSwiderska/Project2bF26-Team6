@@ -150,12 +150,12 @@ def render(
     var col = 0
     while col < maze(row).length do
       if row == rr && col == rc then sb.append('@')
-        else sb.append(maze(row)(col))
-        col += 1
-      sb.append('\n')
-      row += 1
-    sb.append(s"Energy: $energy Cells: $cellsCollected")
-    sb.toString
+      else sb.append(maze(row)(col))
+      col += 1
+    sb.append('\n')
+    row += 1
+  sb.append(s"Energy: $energy  Cells: $cellsCollected")
+  sb.toString
   
 // ─── Game loop ───────────────────────────────────────────────────────────────
 
