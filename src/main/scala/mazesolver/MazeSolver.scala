@@ -69,8 +69,7 @@ def initGame(lines: Array[String] = defaultMazeLines, startEnergy: Int = 12)
 
 /** True when the cell at (row, col) is inside the grid and is not a wall. */
 def isWalkable(maze: Array[Array[Char]], row: Int, col: Int): Boolean =
-  // TODO: Check if (row, col) is within maze bounds and not a wall ('#')
-  false
+  row >= 0 && row < maze.length && col >= 0 && col < maze(row).length && maze(row)(col) != '#'
 
 /** Translate a direction character into a (dRow, dCol) delta.
   *
@@ -80,8 +79,12 @@ def isWalkable(maze: Array[Array[Char]], row: Int, col: Int): Boolean =
   *   Some((dr, dc)) for a recognised direction, None otherwise
   */
 def directionDelta(direction: Char): Option[(Int, Int)] =
-  // TODO: Map 'U', 'D', 'L', 'R' to their corresponding (dRow, dCol) coordinate offsets
-  None
+  direction match 
+    case 'U' => Some((-1, 0))
+    case 'D' => Some((1, 0))
+    case 'L' => Some((0, -1))
+    case 'R' => Some((0, 1))
+    case _   => None
 
 /** Try to move the robot one step in the given direction.
   *
@@ -95,23 +98,37 @@ def moveRobot(
     robot: Array[Int],
     direction: Char
 ): Boolean =
-  // TODO: If the target cell in the given direction is walkable, update robot(0) and robot(1)
-  // in place and return true; otherwise return false
-  false
+  directionDelta(direction) match
+    case Some((dr, dc)) =>
+      val newRow = robot(0) + dr
+      val newCol = robot(1) + dc
+      if isWalkable(maze, newRow, newCol) then
+        robot(0) = newRow
+        robot(1) = newCol
+        true
+      else
+        false
+    case None =>
+        false
 
 /** If the robot is standing on an energy cell ('C'), collect it.
   *
   * The cell is replaced with '.' and 1 is returned; otherwise 0.
   */
 def collectCell(maze: Array[Array[Char]], robot: Array[Int]): Int =
-  // TODO: If the robot is standing on an energy cell ('C'), replace it with '.' and return 1;
-  // otherwise return 0
-  0
+  val row = robot(0)
+  val col = robot(1)
+  if isWalkable(maze, row, col) && maze(row)(col) == 'C' then
+    maze(row)(col) = '.'
+    1
+  else
+    0
 
 /** True when the robot is standing on the exit ('E'). */
 def isAtExit(maze: Array[Array[Char]], robot: Array[Int]): Boolean =
-  // TODO: Return true if the robot is standing on the exit marker ('E')
-  false
+  val row = robot(0)
+  val col = robot(1)
+  isWalkable(maze, row, col) && maze(row)(col) == 'E'
 
 // ─── Rendering ───────────────────────────────────────────────────────────────
 
@@ -125,10 +142,21 @@ def render(
     energy: Int,
     cellsCollected: Int = 0
 ): String =
-  // TODO: Render the maze grid with '@' at the robot's current position,
-  // followed by a status line: s"Energy: $energy  Cells: $cellsCollected"
-  ""
-
+  val sb = new StringBuilder
+  val rr = robot(0)
+  val rc = robot(1)
+  var row = 0
+  while row < maze.length do
+    var col = 0
+    while col < maze(row).length do
+      if row == rr && col == rc then sb.append('@')
+      else sb.append(maze(row)(col))
+      col += 1
+    sb.append('\n')
+    row += 1
+  sb.append(s"Energy: $energy  Cells: $cellsCollected")
+  sb.toString
+  
 // ─── Game loop ───────────────────────────────────────────────────────────────
 
 /** Execute a sequence of moves on the maze.
@@ -145,10 +173,16 @@ def playMoves(
     moves: String,
     startEnergy: Int = 12
 ): Int =
-  // TODO: Execute moves string sequentially, deducting 1 energy per valid move,
-  // adding 3 energy per collected cell ('C'), stopping when stranded (0 energy) or at exit ('E').
-  // Return remaining energy.
-  0
+  var energy = startEnergy
+  var i = 0
+  var running = true
+  while running && i < moves.length && energy > 0 do
+    if moveRobot(maze, robot, moves.charAt(i)) then
+      energy -= 1
+      if collectCell(maze, robot) > 0 then energy += 3
+      if isAtExit(maze, robot) then running = false
+    i += 1
+  energy
 
 /** A cleaner playMoves that properly tracks cell collection and energy bonus.
   *
@@ -163,10 +197,23 @@ def playGame(
     moves: String,
     startEnergy: Int = 12
 ): (Int, Int, Boolean) =
-  // TODO: Execute moves string, deducting 1 energy per valid move, adding 3 per collected cell.
-  // Track cells collected and whether the robot reached the exit.
-  // Return (remainingEnergy, cellsCollected, reachedExit).
-  (startEnergy, 0, false)
+  var energy = startEnergy
+  var cells = 0
+  var reachedExit = false
+  var i = 0
+  var running = true
+  while running && i < moves.length && energy > 0 do
+    if moveRobot(maze, robot, moves.charAt(i)) then
+      energy -= 1
+      val collected = collectCell(maze, robot)
+      if collected > 0 then
+        energy += 3
+        cells += collected
+      if isAtExit(maze, robot) then
+        reachedExit = true
+        running = false
+    i += 1
+  (energy, cells, reachedExit)
 
 // ─── Part 2: Parameter passing and aliasing ──────────────────────────────────
 
