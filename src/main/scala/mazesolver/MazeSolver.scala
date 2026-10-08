@@ -197,10 +197,23 @@ def playGame(
     moves: String,
     startEnergy: Int = 12
 ): (Int, Int, Boolean) =
-  // TODO: Execute moves string, deducting 1 energy per valid move, adding 3 per collected cell.
-  // Track cells collected and whether the robot reached the exit.
-  // Return (remainingEnergy, cellsCollected, reachedExit).
-  (startEnergy, 0, false)
+  var energy = startEnergy
+  var cells = 0
+  var reachedExit = false
+  var i = 0
+  var running = true
+  while running && i < moves.length && energy > 0 do
+    if moveRobot(maze, robot, moves.charAt(i)) then
+      energy -= 1
+      val collected = collectCell(maze, robot)
+      if collected > 0 then
+        energy += 3
+        cells += collected
+      if isAtExit(maze, robot) then
+        reachedExit = true
+        running = false
+    i += 1
+  (energy, cells, reachedExit)
 
 // ─── Part 2: Parameter passing and aliasing ──────────────────────────────────
 
