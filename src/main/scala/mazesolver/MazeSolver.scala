@@ -173,10 +173,16 @@ def playMoves(
     moves: String,
     startEnergy: Int = 12
 ): Int =
-  // TODO: Execute moves string sequentially, deducting 1 energy per valid move,
-  // adding 3 energy per collected cell ('C'), stopping when stranded (0 energy) or at exit ('E').
-  // Return remaining energy.
-  0
+  var energy = startEnergy
+  var i = 0
+  var running = true
+  while running && i < moves.length && energy > 0 do
+    if moveRobot(maze, robot, moves.charAt(i)) then
+      energy -= 1
+      if collectCell(maze, robot) > 0 then energy += 3
+      if isAtExit(maze, robot) then running = false
+    i += 1
+  energy
 
 /** A cleaner playMoves that properly tracks cell collection and energy bonus.
   *
