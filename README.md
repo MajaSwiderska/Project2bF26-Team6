@@ -349,24 +349,25 @@ In this assignment, all state is represented using raw arrays (`Array[Array[Char
 * [ ] No AI tools were used on this assignment.
 * [x] AI tools were used (describe tool, prompts, and provide transcript link below or transcript document(s) in doc/ subdirectory):
 >  Maja Swiderska: 
-** My own work:**
+
+My own work:
   - I worked directly on the `main` branch, implementing one procedure at a time, running `sbt test` after each change and committing as I went.
   - I read the assignment spec carefully to understand what each function (`isWalkable`, `directionDelta`, `moveRobot`, `collectCell`, `isAtExit`, `render`, `playMoves`, `playGame`) was supposed to do before writing any code.
   - I set up the project and wrote the initial base implementation of the Part 1 procedures (`isWalkable`, `directionDelta`, `moveRobot`, `collectCell`, `isAtExit`, `render`, `playMoves`, `playGame`) on my own before asking for any help.
   - Once I got stuck I asked for help understanding the errors and mistakes, not for new code.
 
-** How the AI assisted (DeepSeek):**
+How the AI assisted (DeepSeek):
   - Helped me understand compiler errors when I pasted them (e.g., the indentation error in `moveRobot`'s match expression, the `val` vs `var`error in `render`).
   - Pointed out common mistakes like the leftover dummy return values that were causing tests to fail after I implemented a function.
   - Explained Scala 3 significant indentation rules and how `match` cases must align.
   - Gave me recommendations on how to fix failing tests; I made the final decision on whether to implement each suggestion.
 
-** Changes I made on my own:**
+Changes I made on my own:
   - Chose the final implementation of each function based on my own understanding of the spec.
   - Verified every suggested fix by running `sbt test` and checking that the correct tests flipped from failing to passing.
   - Wrote the written deliverables (Deliverable 1 state-transition table and Deliverable 5 architectural reflection) based on my own understanding of the material.
 
-** Attestation:**
+Attestation:
    DeepSeek was used as a debugging and learning aid after I had already written a base implementation. All code was typed, tested, and verified by me. I take full responsibility for the submitted code.
 
 Signature: Maja Swiderska
