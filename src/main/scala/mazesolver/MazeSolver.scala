@@ -173,7 +173,7 @@ def playGame(
 /** Mutates the shared array — caller sees the change. */
 def moveNorth(position: Array[Int]): Unit =
   // TODO: Mutate position(0) to move north (decrement row by 1)
-  ()
+      position(0) = position(0) - 1
 
 /** Demonstrates that rebinding a local val cannot affect the caller's reference.
   *
@@ -183,7 +183,7 @@ def moveNorth(position: Array[Int]): Unit =
 def localReset(position: Array[Int]): Unit =
   // TODO: Explore parameter passing semantics: create a local val `replacement = Array(1, 1)`
   // and demonstrate why the caller's position array is unaffected.
-  ()
+      val replacement = Array(1, 1)
 
 // ─── Part 2 (cont.): Call by name ────────────────────────────────────────────
 
@@ -198,7 +198,10 @@ def localReset(position: Array[Int]): Unit =
 def repeatUntilStopped(action: => Boolean): Int =
   // TODO: Repeatedly evaluate call-by-name action until it evaluates to false,
   // returning the number of times action returned true.
-  0
+  var count = 0
+  while action do
+    count += 1
+  count
 
 // ─── Part 3: Recursive flood-fill scanner ────────────────────────────────────
 
@@ -233,7 +236,17 @@ def revealReachable(
   //   - mark (row, col) as revealed
   //   - recurse into all four neighbours (up, down, left, right)
   //   - return 1 + sum of newly revealed neighbours
-  0
+  if row < 0 || row >= maze.length || col < 0 || col >= maze(row).length then 0
+  else if maze(row)(col) == '#' then 0
+  else if revealed(row)(col) then 0
+  else
+    revealed(row)(col) = true
+    var count = 1
+    count += revealReachable(maze, revealed, row - 1, col) // Up
+    count += revealReachable(maze, revealed, row + 1, col) // Down
+    count += revealReachable(maze, revealed, row, col - 1) // Left
+    count += revealReachable(maze, revealed, row, col + 1) // Right
+    count
 
 /** Iterative flood-fill using an explicit mutable stack (stretch goal / extra credit).
   *
