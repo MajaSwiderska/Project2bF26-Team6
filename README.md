@@ -254,9 +254,9 @@ Trace the three moves `R`, `D`, `D` on the `smallLines` 5×5 maze starting at `(
 | Step | Move Command | Attempted Pos | Walkable? | Updated Robot Pos | Remaining Energy | Cells Collected | Note |
 |:----:|:------------:|:-------------:|:---------:|:-----------------:|:----------------:|:---------------:|:-----|
 | 0 | *Init* | — | — | `(1, 1)` | 10 | 0 | Initial state |
-| 1 | `R` | `(1, 2)` | [TODO: Yes/No] | [TODO] | [TODO] | [TODO] | [TODO] |
-| 2 | `D` | `(2, 2)` | [TODO: Yes/No] | [TODO] | [TODO] | [TODO] | [TODO] |
-| 3 | `D` | `(2, 2)` | [TODO: Yes/No] | [TODO] | [TODO] | [TODO] | [TODO] |
+| 1 | `R` | `(1, 2)` | Yes | `(1, 2)` | 9 | 0 | Open floor `.`, costs 1 energy|
+| 2 | `D` | `(2, 2)` | No | `(1, 2)` | 9 | 0 | Wall `#`, blocked, cost 0 energy |
+| 3 | `D` | `(2, 2)` | No | `(1, 2)` | 9 | 0 | Still wall, blocked, cost 0 energy |
 
 ---
 
@@ -328,14 +328,47 @@ Compare `revealReachable` (recursive) with `revealReachableIterative` (explicit 
 
 In this assignment, all state is represented using raw arrays (`Array[Array[Char]]`, `Array[Int]`) and loose variables passed into top-level procedures.
 1. What problems or vulnerabilities arise when multiple procedures directly read and mutate naked arrays?
-   > [TODO: Your answer here]
+   - Since the maze and robot are just raw arrays, any procedure that gets a reference to them can change anything. Nothing stops a function from overwriting the exit, moving the robot out of bounds or turning a floor cell into a wall.
+   - The robot stored as `Array[Int]` just two numbers. There is no rule saying index 0 is the row and index 1 is the column. If you accidentlly swap them the complier won't catch it and the game will start behaving weird.
+   - If two procedures hold the same array, changes made by one show up in the other. The `testAliasing` test shows this clearly, `a` and `b` point to the same heap array so when `a` changes it `b` sees the change too. In a bigger program, this type of hidden connections causes bugs and it could be annoying.
+   - The types that don't tell you much. `Array[Int]` could be a robot position, an energy value or a coordinate offset. They do all look the same to the complier so mistakes sometimes go through. 
+   - There is no place that defines what a "robot" actually is. You can read every procedure that touches the robot array to figure out what the fields mean.
+   - Testing is annoying because every test has to build a whole maze and robot array by hand even if it's checking on small thing.
 
 2. How would an Object-Oriented or ADT-based design (e.g., `Maze`, `Robot`, `Cell`, `Position`) improve encapsulation, type safety, and maintainability in Project 2?
-   > [TODO: Your answer here]
+   - Instead of using raw arrays, giving each concept its own type. A `Position(row, col)` for locations, a `Robot(position, energy)` for the robot, a `Cell` enum for whats in the grid (Wall, Floor, Energy, Exit), and a `Maze(grid)` for the grid itself.
+   - Encapsulation means rules like "the robot is always on a walkable cell" gets enforced by the code instead of relying on everyone remembering them.
+   - Type safety means `Position`, `Cell`, and `Robot` are separate types. You cannot accidentally pass a robot postion where an energy value was expected and the complier catches it if you try.
+   - Adding a new feature is easier, if you want a new kind of cell like a locked door you just add a new case to the `Cell` enum. The compiler tells you every match statement that needs updating.
+   - Testing does get simpler. A test can just write `Robot(Position(1, 1), energy = 10)` instead of building raw arrays by hand.
+   - The downside is more code. More types, more files and more boilerplate. For a small maze game like this project the imperative version is quicker to write. But once the program grows the OO/ADT version is the only ine that stays manageable.
 
 ---
 
 ### AI Usage Disclosure
 * [ ] No AI tools were used on this assignment.
-* [ ] AI tools were used (describe tool, prompts, and provide transcript link below or transcript document(s) in doc/ subdirectory):
-  > [TODO: AI transcript link or statement]
+* [x] AI tools were used (describe tool, prompts, and provide transcript link below or transcript document(s) in doc/ subdirectory):
+>  Maja Swiderska: 
+
+My own work:
+  - I worked directly on the `main` branch, implementing one procedure at a time, running `sbt test` after each change and committing as I went.
+  - I read the assignment spec carefully to understand what each function (`isWalkable`, `directionDelta`, `moveRobot`, `collectCell`, `isAtExit`, `render`, `playMoves`, `playGame`) was supposed to do before writing any code.
+  - I set up the project and wrote the initial base implementation of the Part 1 procedures (`isWalkable`, `directionDelta`, `moveRobot`, `collectCell`, `isAtExit`, `render`, `playMoves`, `playGame`) on my own before asking for any help.
+  - Once I got stuck I asked for help understanding the errors and mistakes, not for new code.
+
+How the AI assisted (DeepSeek):
+  - Helped me understand compiler errors when I pasted them (e.g., the indentation error in `moveRobot`'s match expression, the `val` vs `var`error in `render`).
+  - Pointed out common mistakes like the leftover dummy return values that were causing tests to fail after I implemented a function.
+  - Explained Scala 3 significant indentation rules and how `match` cases must align.
+  - Gave me recommendations on how to fix failing tests; I made the final decision on whether to implement each suggestion.
+
+Changes I made on my own:
+  - Chose the final implementation of each function based on my own understanding of the spec.
+  - Verified every suggested fix by running `sbt test` and checking that the correct tests flipped from failing to passing.
+  - Wrote the written deliverables (Deliverable 1 state-transition table and Deliverable 5 architectural reflection) based on my own understanding of the material.
+
+Attestation:
+   DeepSeek was used as a debugging and learning aid after I had already written a base implementation. All code was typed, tested, and verified by me. I take full responsibility for the submitted code.
+
+Signature: Maja Swiderska
+Date: October 8, 2026

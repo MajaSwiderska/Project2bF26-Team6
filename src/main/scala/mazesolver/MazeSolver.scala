@@ -69,7 +69,12 @@ def initGame(lines: Array[String] = defaultMazeLines, startEnergy: Int = 12)
 
 /** True when the cell at (row, col) is inside the grid and is not a wall. */
 def isWalkable(maze: Array[Array[Char]], row: Int, col: Int): Boolean =
-  row >= 0 && row < maze.length && col >= 0 && col < maze(row).length && maze(row)(col) != '#'
+   // Checking if that row is not negative and not past the bottom of the grid
+  row >= 0 && row < maze.length &&
+    // Checking if that col is not negative and not past the right edge of this row
+    col >= 0 && col < maze(row).length &&
+    // Checking if that cell is not a wall character
+    maze(row)(col) != '#'
 
 /** Translate a direction character into a (dRow, dCol) delta.
   *
@@ -79,11 +84,17 @@ def isWalkable(maze: Array[Array[Char]], row: Int, col: Int): Boolean =
   *   Some((dr, dc)) for a recognised direction, None otherwise
   */
 def directionDelta(direction: Char): Option[(Int, Int)] =
+  // Matching on the direction character
   direction match 
+    // up: decrease row by 1, col stays the same
     case 'U' => Some((-1, 0))
+    // down: increase row by 1, col stays the same
     case 'D' => Some((1, 0))
+    // left: row stays the same, decrease col by 1
     case 'L' => Some((0, -1))
+    // right: row stays the same, increase col by 1
     case 'R' => Some((0, 1))
+    // Any other character is not a valid direction
     case _   => None
 
 /** Try to move the robot one step in the given direction.
@@ -98,16 +109,22 @@ def moveRobot(
     robot: Array[Int],
     direction: Char
 ): Boolean =
+  // look up the delta for this direction
   directionDelta(direction) match
+    // valid direction: computing the target cell
     case Some((dr, dc)) =>
       val newRow = robot(0) + dr
       val newCol = robot(1) + dc
+      // only move if the target cell is walkable
       if isWalkable(maze, newRow, newCol) then
+        // mutate the robot array in place so the caller sees the new position
         robot(0) = newRow
         robot(1) = newCol
         true
       else
+        // blocked: leaves the robot where it is
         false
+    // invalid direction: no move, no mutation
     case None =>
         false
 
@@ -116,18 +133,25 @@ def moveRobot(
   * The cell is replaced with '.' and 1 is returned; otherwise 0.
   */
 def collectCell(maze: Array[Array[Char]], robot: Array[Int]): Int =
+  // reads the robots current position
   val row = robot(0)
   val col = robot(1)
+  // checks if we're inside the grid and standing on an energy cell
   if isWalkable(maze, row, col) && maze(row)(col) == 'C' then
+    // overwrite the cell with floor so it cannot be collected twice
     maze(row)(col) = '.'
+    // return 1 to signal that a cell was collected
     1
   else
+    // nothing to collect
     0
 
 /** True when the robot is standing on the exit ('E'). */
 def isAtExit(maze: Array[Array[Char]], robot: Array[Int]): Boolean =
+  // reads the robots current position
   val row = robot(0)
   val col = robot(1)
+  // gaurd with isWalkable to avoid out-of-bounds access, then it checks for 'E'
   isWalkable(maze, row, col) && maze(row)(col) == 'E'
 
 // ─── Rendering ───────────────────────────────────────────────────────────────
@@ -142,19 +166,28 @@ def render(
     energy: Int,
     cellsCollected: Int = 0
 ): String =
+  // StringBuilder accumulates the output line by line
   val sb = new StringBuilder
+  // remembers where the robot is so we can overlay '@' there
   val rr = robot(0)
   val rc = robot(1)
+  // walks through every row of the maze
   var row = 0
   while row < maze.length do
+    // walks through every column of this row
     var col = 0
     while col < maze(row).length do
+      // if this cell is the robots position, it draws '@'
       if row == rr && col == rc then sb.append('@')
+      // otherwise draw whatever is in the maze (floor, wall, exit, so on)
       else sb.append(maze(row)(col))
       col += 1
+      // end of the row, add a newline
     sb.append('\n')
     row += 1
+  // append the status line after the grid
   sb.append(s"Energy: $energy  Cells: $cellsCollected")
+  // converts the StringBuilder to a String and return it
   sb.toString
   
 // ─── Game loop ───────────────────────────────────────────────────────────────
@@ -173,15 +206,25 @@ def playMoves(
     moves: String,
     startEnergy: Int = 12
 ): Int =
+  // tracks the remaining energy
   var energy = startEnergy
+  // index into the moves string
   var i = 0
+  // loop control flag, sets to false when we reach the exit
   var running = true
+  // loop while: the game is running, more moves to process and we have energy left
   while running && i < moves.length && energy > 0 do
+    // trying to move in the direction of the current character
     if moveRobot(maze, robot, moves.charAt(i)) then
+      // successful move costs 1 energy
       energy -= 1
+      // if we landed on an energy cell, it collects it and add +3 energy
       if collectCell(maze, robot) > 0 then energy += 3
+      // if we're now on the exit, stop the loop
       if isAtExit(maze, robot) then running = false
+    // blocked moves does cost 0 energy, so nothing to do in the else case
     i += 1
+  // return however much energy is left
   energy
 
 /** A cleaner playMoves that properly tracks cell collection and energy bonus.
@@ -197,22 +240,28 @@ def playGame(
     moves: String,
     startEnergy: Int = 12
 ): (Int, Int, Boolean) =
+  // tracks energy, cells collected, and wheather we escaped
   var energy = startEnergy
   var cells = 0
   var reachedExit = false
+  // index and loop control
   var i = 0
   var running = true
+  // same loop structure as playMoves
   while running && i < moves.length && energy > 0 do
     if moveRobot(maze, robot, moves.charAt(i)) then
       energy -= 1
+      // collectCell returns 0 or 1, so we add it directly to cells
       val collected = collectCell(maze, robot)
       if collected > 0 then
         energy += 3
         cells += collected
+      // if we reached the exit, remember it and stop the loop
       if isAtExit(maze, robot) then
         reachedExit = true
         running = false
     i += 1
+  // return all three pieces of info as a tuple
   (energy, cells, reachedExit)
 
 // ─── Part 2: Parameter passing and aliasing ──────────────────────────────────
