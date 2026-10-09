@@ -267,7 +267,17 @@ Illustrate with an ASCII diagram the stack and heap layout during execution of:
 2. `localReset(pos)`
 
 ```
-[TODO: Provide your ASCII memory diagram here showing Stack Frames, Callee Parameters, and Heap Arrays]
+STACK (Frames & Local Variables)         HEAP (Allocated Objects)
+--------------------------------        ---------------------------
+Caller:
+  pos ---------------------------------> Array #1 [2, 4] @ 0x01
+                                            ^
+moveNorth(position):                        |
+  position ---------------------------------+ (mutates Array #1 in place)
+
+localReset(position):                       |
+  position ---------------------------------+ (still points to Array #1)
+  replacement -------------------------> Array #2 [1, 1] @ 0x02 (new heap object)
 ```
 
 **Written Explanation:**
