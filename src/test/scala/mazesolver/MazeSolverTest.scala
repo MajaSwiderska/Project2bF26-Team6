@@ -579,16 +579,8 @@ class SampleMazesTest:
 
 class StudentMazeSolverTest:
 
-  // TODO: Add your own unit tests here to thoroughly test edge cases:
-  // - Boundary conditions (robot trapped by walls on all 4 sides)
-  // - Energy exhaustion before reaching the exit
-  // - Mazes with multiple energy cells or alternate branches
-  // - Emergency scanner on mazes with cyclic / loop-containing corridors
-
-  @Test @DisplayName("TODO: student test for completely trapped robot")
+  @Test @DisplayName("student test for completely trapped robot")
   def testTrappedRobot(): Unit =
-    // TODO: Construct a maze where the robot is enclosed by walls '#', attempt moves in all 4 directions,
-    // and verify the robot cannot move and energy is preserved.
     val lines = Array(
       "###",
       "#R#",
@@ -607,9 +599,8 @@ class StudentMazeSolverTest:
     assertEquals(0, collected)
     assertFalse(escaped)
 
-  @Test @DisplayName("TODO: student test for energy exhaustion mid-journey")
+  @Test @DisplayName("student test for energy exhaustion mid-journey")
   def testEnergyExhaustion(): Unit =
-    // TODO: Verify that a robot running out of energy becomes stranded and returns (0, cells, false).
     val lines = Array(
       "#######",
       "#R....E#",
@@ -623,40 +614,34 @@ class StudentMazeSolverTest:
     assertEquals(1, robot(0))
     assertEquals(3, robot(1))
 
-  @Test @DisplayName("TODO: student test for scanner on cyclic corridors")
+  @Test @DisplayName("student test for scanner on cyclic corridors")
   def testScannerCyclicCorridor(): Unit =
-    // TODO: Verify that recursive flood fill terminates correctly without infinite recursion
-    // when corridors form loops.
-    @Test
-    @DisplayName("student test for scanner on cyclic corridors")
-    def testScannerCyclicCorridor(): Unit =
-      val lines = Array(
-        "#####",
-        "#...#",
-        "#.#.#",
-        "#...#",
-        "#####"
-      )
-      val maze = parseMaze(lines)
-      val revealed = makeRevealed(maze)
-      val count = revealReachable(maze, revealed, 1, 1)
-      assertEquals(8, count)
-      for r <- 1 to 3; c <- 1 to 3 do
-        if r != 2 || c != 2 then
-          assertTrue(revealed(r)(c))
-        else
-          assertFalse(revealed(r)(c))
+    val lines = Array(
+      "#####",
+      "#...#",
+      "#.#.#",
+      "#...#",
+      "#####"
+    )
+    val maze = parseMaze(lines)
+    val revealed = makeRevealed(maze)
+    val count = revealReachable(maze, revealed, 1, 1)
+    assertEquals(8, count)
+    for r <- 1 to 3; c <- 1 to 3 do
+      if r != 2 || c != 2 then
+        assertTrue(revealed(r)(c))
+      else
+        assertFalse(revealed(r)(c))
 
-@Test
-@DisplayName("student test for multiple energy cells on route")
-def testMultipleEnergyCells(): Unit =
-  val lines = Array(
-    "#######",
-    "#R.C.CE#",
-    "#######"
-  )
-  val (maze, robot, _, _) = initGame(lines, 5)
-  val (remainingEnergy, cellsCollected, reachedExit) = playGame(maze, robot, "RRRRRR", 5)
-  assertTrue(reachedExit)
-  assertEquals(2, cellsCollected)
-  assertEquals(5 - 5 + (2 * 3), remainingEnergy)
+  @Test @DisplayName("student test for multiple energy cells on route")
+  def testMultipleEnergyCells(): Unit =
+    val lines = Array(
+      "#######",
+      "#R.C.CE#",
+      "#######"
+    )
+    val (maze, robot, _, _) = initGame(lines, 5)
+    val (remainingEnergy, cellsCollected, reachedExit) = playGame(maze, robot, "RRRRRR", 5)
+    assertTrue(reachedExit)
+    assertEquals(2, cellsCollected)
+    assertEquals(5-5 + (2 * 3), remainingEnergy)
