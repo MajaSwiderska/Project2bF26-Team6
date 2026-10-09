@@ -644,4 +644,4 @@ class StudentMazeSolverTest:
     val (remainingEnergy, cellsCollected, reachedExit) = playGame(maze, robot, "RRRRRR", 5)
     assertTrue(reachedExit)
     assertEquals(2, cellsCollected)
-    assertEquals(5-5 + (2 * 3), remainingEnergy)
+    assertEquals(5 - 5 + (2 * 3), remainingEnergy)

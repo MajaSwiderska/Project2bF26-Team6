@@ -69,7 +69,7 @@ def initGame(lines: Array[String] = defaultMazeLines, startEnergy: Int = 12)
 
 /** True when the cell at (row, col) is inside the grid and is not a wall. */
 def isWalkable(maze: Array[Array[Char]], row: Int, col: Int): Boolean =
-   // Checking if that row is not negative and not past the bottom of the grid
+  // Checking if that row is not negative and not past the bottom of the grid
   row >= 0 && row < maze.length &&
     // Checking if that col is not negative and not past the right edge of this row
     col >= 0 && col < maze(row).length &&
@@ -85,7 +85,7 @@ def isWalkable(maze: Array[Array[Char]], row: Int, col: Int): Boolean =
   */
 def directionDelta(direction: Char): Option[(Int, Int)] =
   // Matching on the direction character
-  direction match 
+  direction match
     // up: decrease row by 1, col stays the same
     case 'U' => Some((-1, 0))
     // down: increase row by 1, col stays the same
@@ -95,7 +95,7 @@ def directionDelta(direction: Char): Option[(Int, Int)] =
     // right: row stays the same, increase col by 1
     case 'R' => Some((0, 1))
     // Any other character is not a valid direction
-    case _   => None
+    case _ => None
 
 /** Try to move the robot one step in the given direction.
   *
@@ -126,7 +126,7 @@ def moveRobot(
         false
     // invalid direction: no move, no mutation
     case None =>
-        false
+      false
 
 /** If the robot is standing on an energy cell ('C'), collect it.
   *
@@ -189,7 +189,7 @@ def render(
   sb.append(s"Energy: $energy  Cells: $cellsCollected")
   // converts the StringBuilder to a String and return it
   sb.toString
-  
+
 // ─── Game loop ───────────────────────────────────────────────────────────────
 
 /** Execute a sequence of moves on the maze.
@@ -269,7 +269,7 @@ def playGame(
 /** Mutates the shared array — caller sees the change. */
 def moveNorth(position: Array[Int]): Unit =
   // TODO: Mutate position(0) to move north (decrement row by 1)
-      position(0) = position(0) - 1
+  position(0) = position(0) - 1
 
 /** Demonstrates that rebinding a local val cannot affect the caller's reference.
   *
@@ -279,7 +279,7 @@ def moveNorth(position: Array[Int]): Unit =
 def localReset(position: Array[Int]): Unit =
   // TODO: Explore parameter passing semantics: create a local val `replacement = Array(1, 1)`
   // and demonstrate why the caller's position array is unaffected.
-      val replacement = Array(1, 1)
+  val replacement = Array(1, 1)
 
 // ─── Part 2 (cont.): Call by name ────────────────────────────────────────────
 
@@ -360,7 +360,8 @@ def revealReachableIterative(
 ): Int =
   // TODO (Extra Credit): Implement iterative flood-fill using an explicit mutable stack
   // (scala.collection.mutable.Stack).
-  if startRow < 0 || startRow >= maze.length || startCol < 0 || startCol >= maze(startRow).length then 0
+  if startRow < 0 || startRow >= maze.length || startCol < 0 || startCol >= maze(startRow).length
+  then 0
   else if maze(startRow)(startCol) == '#' || revealed(startRow)(startCol) then 0
   else
     val stack = scala.collection.mutable.Stack[(Int, Int)]()
