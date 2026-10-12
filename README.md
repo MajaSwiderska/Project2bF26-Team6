@@ -282,13 +282,13 @@ localReset(position):                       |
 
 **Written Explanation:**
 1. Why does `moveNorth` mutate the caller's array, whereas passing an `Int` variable (e.g. `energy`) cannot be mutated by the callee?
-   > [TODO: Your answer here]
+   > Scala uses call-by-value parameter passing. For primitive types, the value is copied into the function's stack frame, meaning changing a local variable does not affect the caller's original variable. For reference types, the reference is copied by value. Both the caller's reference position and the callee's parameter position point to the same array object on the heap, so changing an array element modifies the shared array object and is visible to the caller.
 
 2. Why does Scala reject `position = Array(1, 1)` in parameter lists, and what happens when you rebind a local `val replacement = Array(1, 1)`?
-   > [TODO: Your answer here]
+   > In Scala, function parameters are immutable by default. Trying to reassign a parameter using position = Array(1, 1) results in a compilation error. Creating val replacement = Array(1, 1) allocates a new array object on the heap and binds replacement to that new reference. Since reference addresses are passed by value, creating or reassigning a local reference does not change the caller's variable or make it point to the new array. The original array remains unchanged unless its elements are explicitly modified.
 
 3. How does call-by-name (`action: => Boolean` in `repeatUntilStopped`) fundamentally differ from passing a reference or passing a primitive value?
-   > [TODO: Your answer here]
+   > Call-by-value evaluates a function argument before passing its value or reference to the method. Call-by-name delays evaluating the argument expression until it is referenced inside the method. The expression is evaluated each time action is used, rather than being evaluated just once before the method call.
 
 ---
 
@@ -304,21 +304,58 @@ Given the 4×4 `tinyLines` maze:
 Trace `revealReachable(maze, revealed, 1, 1)`:
 
 ```
-[TODO: Show the sequence of activation records pushed and popped from the call stack, including arguments (row, col) and return values]
+[For revealReachable(maze, revealed, 1, 1):
+Call (1, 1): The cell is valid floor. Mark revealed(1)(1) = true. Set count = 1.
+Call Up (0, 1): The cell is a wall (#). Returns 0.
+Call Down (2, 1): The cell is valid floor. Mark revealed(2)(1) = true. Set count = 1.
+Call Up (1, 1): The cell has already been revealed. Hits the base case and returns 0.
+Call Down (3, 1): The cell is a wall (#). Returns 0.
+Call Left (2, 0): The cell is a wall (#). Returns 0.
+Call Right (2, 2): The cell is a wall (#). Returns 0.
+revealReachable(2, 1) finishes and returns 1 + 0 + 0 + 0 + 0 = 1.
+Call Left (1, 0): The cell is a wall (#). Returns 0.
+Call Right (1, 2): The cell is valid floor. Mark revealed(1)(2) = true. Set count = 1.
+Call Up (0, 2): The cell is a wall (#). Returns 0.
+Call Down (2, 2): The cell is a wall (#). Returns 0.
+Call Left (1, 1): The cell has already been revealed. Hits the base case and returns 0.
+Call Right (1, 3): The cell is a wall (#). Returns 0.
+revealReachable(1, 2) finishes and returns 1 + 0 + 0 + 0 + 0 = 1.
+revealReachable(1, 1) returns:
+1+0 (Up)+1 (Down)+0 (Left)+1 (Right)=3
+Total cells revealed: 3.]
 ```
 
 **Questions:**
 1. What values are stored in each activation record (stack frame) on the JVM?
-   > [TODO: Your answer here]
+   > Each activation record contains the method parameters (row and col), references to the maze and revealed arrays, local variables such as count, operand stack state, and information needed to return execution to the calling method.
 
 2. Which invocations hit the base cases (out of bounds, wall `#`, or already revealed)?
-   > [TODO: Your answer here]
 
-3. Why is marking `revealed(row)(col) = true` *prior* to recursive neighbor exploration essential to avoid infinite recursion?
-   > [TODO: Your answer here]
+(0, 1) — wall
 
-4. What is the maximum theoretical stack depth in the worst-case maze of size $M \times N$?
-   > [TODO: Your answer here]
+(1, 1) — already revealed
+
+(3, 1) — wall
+
+(2, 0) — wall
+
+(2, 2) — wall
+
+(1, 0) — wall
+
+(0, 2) — wall
+
+(2, 2) — wall, called again
+
+(1, 1) — already revealed, called again
+
+(1, 3) — wall]
+
+4. Why is marking `revealed(row)(col) = true` *prior* to recursive neighbor exploration essential to avoid infinite recursion?
+   > Marking a cell as visited before exploring its neighbors prevents recursive calls from repeatedly revisiting the same cells. For example, cell A may call cell B, which then tries to call cell A again. Because cell A has already been marked as revealed, the recursive call hits the base case and immediately returns 0. Without marking cells first, the program could repeatedly revisit the same cells, causing infinite recursion.
+
+5. What is the maximum theoretical stack depth in the worst-case maze of size $M \times N$?
+   > The worst-case recursive stack depth is O(M×N). In a maze with a long, winding corridor, the algorithm may need to visit many open cells recursively before reaching a dead end. In the worst case, the number of active recursive calls can grow with the number of cells in the maze.
 
 ---
 
@@ -326,11 +363,13 @@ Trace `revealReachable(maze, revealed, 1, 1)`:
 
 Compare `revealReachable` (recursive) with `revealReachableIterative` (explicit heap stack):
 * **Memory location of state:**
-  > [TODO: Your answer here]
+  > For the recursive version, the JVM call stack manages activation records that are pushed onto it. It stores information for active method calls. In Explicit Heap Stack, coordinate pairs (Int, Int) are stored in an explicit mutable stack object allocated on the JVM heap.
+
 * **Risk of `StackOverflowError` vs. `OutOfMemoryError`:**
-  > [TODO: Your answer here]
+  > The JVM call stack has a limited size per thread. Deep recursion on a large maze can exceed the stack limit and cause a java.lang.StackOverflowError. The explicit stack is stored on the heap, which generally has more available memory than the thread stack. This avoids recursion-related stack overflow, although the program can still encounter java.lang.OutOfMemoryError if it exhausts available heap memory.
+
 * **Performance tradeoffs (function invocation overhead vs object allocation):**
-  > [TODO: Your answer here]
+  > Each recursive call creates an activation record and incurs method-call overhead. It does not require a separate heap allocation for every call. The explicit stack avoids deep recursive method calls and their associated call-stack limits. However, storing coordinate pairs may involve heap allocations and garbage-collection overhead, depending on the implementation and JVM optimizations.
 
 ---
 
@@ -382,3 +421,28 @@ Attestation:
 
 Signature: Maja Swiderska
 Date: October 8, 2026
+
+>  Hannah Fadda:
+
+My own work:
+  - I set up the project and wrote the initial base implementation of Parts 2 and 3 on my own before asking for any help. I carefully read the instructions and studied the code to figure out the correct implementation.
+  - I then asked AI for help with debugging and reformatting
+
+How the AI assisted (ChatGPT):
+  - Helped me pinpoint errors after I copied and pasted the error messages.
+  - Explained some of the code requirements outlined in the instructions to me so I could better implement them.
+  - Helped me with formatting the code and made suggestions.
+  - Explained to me what the error I got from sbt scalafmtCheckAll meant.
+
+Changes I made on my own:
+  - I looked over the suggestions and chose which ones to implement after fully understanding the code.
+  - Implemented some of the suggested fixes and retested them to confirm correctness.
+  - Used my understanding of the error messages to debug the code
+  - Wrote the written deliverables 2, 3, and 4 based on my own understanding of the material.
+
+Attestation:
+   ChatGPT was used as a debugging and learning aid. All code was typed, tested, and verified by me. I take full responsibility for the submitted code.
+
+Signature: Hannah Fadda
+Date: October 11, 2026
+
