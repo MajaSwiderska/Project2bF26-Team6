@@ -1,0 +1,140 @@
+================================================================================
+COMP 371 / COMP 471 Project 1: Maze Rescue — Team Grade Report
+================================================================================
+
+Team Identifier: Team_6
+Repository Name: Project2bF26-Team6
+Repository URL:  https://github.com/MajaSwiderska/Project2bF26-Team6.git
+Branch:          main
+HEAD Commit:     9839014e57c2ff74ed8b979bfc9f1d08566bb014
+
+--------------------------------------------------------------------------------
+10-CRITERION RUBRIC BREAKDOWN
+--------------------------------------------------------------------------------
+
+1. Navigation & Bounds (Max: 1.0)
+   Score: 1.0 / 1.0
+   Evidence:
+   - `isWalkable`, `directionDelta`, and in-place `moveRobot` are fully implemented and correct.
+   - All navigation unit tests pass.
+
+2. Game Mechanics & State (Max: 0.5)
+   Score: 0.5 / 0.5
+   Evidence:
+   - `collectCell`, `isAtExit`, `playMoves`, and `playGame` correctly manage energy, cell collection, and stopping rules.
+   - All state/game tests pass.
+
+3. Rendering (Max: 0.5)
+   Score: 0.5 / 0.5
+   Evidence:
+   - `render` correctly overlays '@' without mutating underlying maze array and prints exact status line:
+     `Energy: $energy  Cells: $cellsCollected`
+   - All rendering tests pass.
+
+4. Parameter Passing Lab (Max: 0.5)
+   Score: 0.5 / 0.5
+   Evidence:
+   - `moveNorth` and `localReset` correctly implemented.
+   - Deliverable 2 written explanations thoroughly discuss reference copying, primitive passing, and parameter immutability.
+   - Parameter passing tests pass.
+
+5. Call-by-Name Evaluation (Max: 0.5)
+   Score: 0.5 / 0.5
+   Evidence:
+   - `repeatUntilStopped` correctly loops while evaluating call-by-name parameter `action`.
+   - Deliverable 2 written response explains repeated evaluation on each loop iteration.
+   - Tests pass.
+
+6. Recursive Flood Fill (Max: 1.0)
+   Score: 1.0 / 1.0
+   Evidence:
+   - `revealReachable` correctly checks base cases (bounds, wall, already visited).
+   - Marks current cell as revealed prior to recursive calls.
+   - Returns 1 + sum of newly revealed neighbors.
+   - Flood fill unit tests pass.
+
+7. Memory Diagram & Stack Trace (Max: 0.5)
+   Score: 0.5 / 0.5
+   Evidence:
+   - Deliverable 2 ASCII stack/heap diagram clearly provided.
+   - Deliverable 3 activation-record trace and questions 1-4 completed accurately.
+
+8. State Table & OO Reflection (Max: 0.5)
+   Score: 0.5 / 0.5
+   Evidence:
+   - Deliverable 1 state table for R, D, D completed.
+   - Deliverable 5 reflection on procedural naked arrays vs OO/ADT design is exceptionally thorough, analyzing domain modelling, type safety, and testing tradeoffs.
+
+9. Student Unit Tests (Max: 0.5)
+   Score: 0.5 / 0.5
+   Evidence:
+   - Implemented 4 original unit tests in `StudentMazeSolverTest`:
+     * `testTrappedRobot`
+     * `testEnergyExhaustion`
+     * `testScannerCyclicCorridor`
+     * `testMultipleEnergyCells`
+   - All 4 tests pass cleanly.
+
+10. Scala 3 Style & Strict Typing (Max: 0.5)
+    Score: 0.5 / 0.5
+    Evidence:
+    - Code conforms to `-Yexplicit-nulls`, `-language:strictEquality`, and `-Werror`.
+    - Passes `sbt scalafmtCheckAll`.
+    - Strictly imperative: no custom domain classes, case classes, traits, or ADTs.
+
+--------------------------------------------------------------------------------
+WRITTEN REPORT REVIEW
+--------------------------------------------------------------------------------
+- Deliverable 1: Accurate state-transition table for moves R, D, D.
+- Deliverable 2: Complete memory diagrams and thorough explanations of parameter semantics.
+- Deliverable 3: Complete scanner call-stack trace and accurate answers to all 4 questions.
+- Deliverable 4: Comprehensive comparison of recursion vs iteration (call stack vs heap, failure modes, performance).
+- Deliverable 5: Outstanding, detailed architectural reflection on procedural shortcomings and OO/ADT benefits.
+
+--------------------------------------------------------------------------------
+TEST, BUILD, & FORMATTING COMMAND RESULTS
+--------------------------------------------------------------------------------
+- `sbt compile`: PASS (Exit code 0)
+- `sbt test`: PASS (Exit code 0, 62/62 tests passed: 58 starter + 4 student)
+- `sbt scalafmtCheckAll`: PASS (Exit code 0)
+- `sbt clean coverage test coverageReport`: PASS (Exit code 0; Statement coverage: 77.27%, Branch coverage: 63.64%)
+- `sbt stage`: PASS (Exit code 0)
+
+--------------------------------------------------------------------------------
+PROJECT STRUCTURE & GIT HISTORY OBSERVATIONS
+--------------------------------------------------------------------------------
+- Standard project structure maintained.
+- 27 git commits demonstrating collaborative, incremental work across team members.
+
+--------------------------------------------------------------------------------
+AI TRANSCRIPT & AFFIDAVIT EVIDENCE
+--------------------------------------------------------------------------------
+- AI Usage Disclosure in README.md is checked [x].
+- Highly detailed signed attestations and disclosures by both team members (Maja Swiderska and Hannah Fadda) specifying tools used (DeepSeek, ChatGPT), prompts, error message handling, and independent verification.
+
+--------------------------------------------------------------------------------
+DEDUCTIONS
+--------------------------------------------------------------------------------
+- No deductions applied.
+Deductions: 0.0 points
+
+--------------------------------------------------------------------------------
+EXTRA CREDIT
+--------------------------------------------------------------------------------
+- `revealReachableIterative` correctly implemented with explicit heap stack.
+- Deliverable 4 contains written comparison between recursive and iterative traversal.
+Extra Credit Awarded: +0.5 / 0.5
+
+--------------------------------------------------------------------------------
+FINAL SCORE CALCULATION
+--------------------------------------------------------------------------------
+Base score:   6.0 / 6.0
+Deductions:   0.0 points
+Extra credit: 0.5 / 0.5
+Final score:  6.5
+
+--------------------------------------------------------------------------------
+STUDENT-FACING FEEDBACK
+--------------------------------------------------------------------------------
+Exemplary work! The implementation is complete and correct across all parts, including extra credit. The written report—especially the procedural vs. OO reflection and the signed AI disclosures—is thorough and thoughtful. All tests and style checks pass cleanly.
+
